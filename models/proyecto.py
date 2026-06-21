@@ -19,6 +19,19 @@ class Proyecto:
         except Exception as e:
             print(f"❌ Error al guardar el proyecto en la base de datos: {e}")
 
+    def actualizar_fase(self, conexion, id_proyecto, nueva_fase):
+        try:
+            cursor = conexion.cursor()
+            # La instrucción SQL UPDATE modifica el campo específico usando el ID como filtro
+            sql = "UPDATE proyectos SET fase_actual = %s WHERE id_proyecto = %s"
+            cursor.execute(sql, (nueva_fase, id_proyecto))
+            conexion.commit()
+            print(f"Proyecto ID {id_proyecto} actualizado a la fase: {nueva_fase}")
+            return True
+        except Exception as e:
+            print(f"Error al actualizar la fase del proyecto: {e}")
+            return False
+
     def avanzar_fase(self, nueva_fase: str):
         self.fase_actual = nueva_fase
         print(f"📈 Proyecto '{self.titulo_temp}' avanzó a la fase: {self.fase_actual}")

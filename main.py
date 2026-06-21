@@ -10,14 +10,14 @@ ctk.set_default_color_theme("blue")
 
 # 2. Ventana principal
 ventana = ctk.CTk()
-ventana.geometry("950x800") 
+ventana.geometry("950x850") # Aumentamos un poco la altura para el nuevo panel
 ventana.title("TrackManager Pro - Offten Studio")
 
 titulo_principal = ctk.CTkLabel(ventana, text="🎵 Panel Maestro de Proyectos", font=("Arial", 24, "bold"), text_color="#FFFFFF")
 titulo_principal.pack(pady=10) 
 
 # --- PESTAÑAS ---
-panel_pestanas = ctk.CTkTabview(ventana, width=880, height=650)
+panel_pestanas = ctk.CTkTabview(ventana, width=880, height=700)
 panel_pestanas.pack(pady=5, padx=20)
 
 tab_usuarios = panel_pestanas.add("Usuarios")
@@ -65,8 +65,9 @@ def cargar_usuarios_gui():
         bd.desconectar()
     caja_usuarios.configure(state="disabled")
 
+
 # ================================================================
-# PESTAÑA 2: PROYECTOS (Registro y Lista Relacional)
+# PESTAÑA 2: PROYECTOS (Registro, Lista Relacional y Update)
 # ================================================================
 sub_proy = ctk.CTkLabel(tab_proyectos, text="Crear Nueva Maqueta", font=("Arial", 16, "bold"), text_color="#FFFFFF")
 sub_proy.pack(pady=5)
@@ -95,23 +96,63 @@ boton_proy.pack(pady=10)
 etiqueta_estado_proy = ctk.CTkLabel(tab_proyectos, text="", font=("Arial", 12))
 etiqueta_estado_proy.pack()
 
-caja_proyectos = ctk.CTkTextbox(tab_proyectos, width=700, height=150, font=("Courier New", 13), wrap="none")
-caja_proyectos.pack(pady=10)
+caja_proyectos = ctk.CTkTextbox(tab_proyectos, width=700, height=130, font=("Courier New", 13), wrap="none")
+caja_proyectos.pack(pady=5)
 
 def cargar_proyectos_gui():
     caja_proyectos.configure(state="normal"); caja_proyectos.delete("1.0", "end")
     bd = ConexionBD(); con = bd.conectar()
     if con:
         cursor = con.cursor()
-        cursor.execute("SELECT p.id_proyecto, p.titulo_temp, p.genero, u.correo FROM proyectos p INNER JOIN usuarios u ON p.id_usuario = u.id_usuario")
+        cursor.execute("SELECT p.id_proyecto, p.titulo_temp, p.genero, p.fase_actual, u.correo FROM proyectos p INNER JOIN usuarios u ON p.id_usuario = u.id_usuario")
         regs = cursor.fetchall()
-        caja_proyectos.insert("end", f"{'ID':<4} | {'TÍTULO':<20} | {'GÉNERO':<12} | {'DUEÑO'}\n" + "-"*75 + "\n")
-        for f in regs: caja_proyectos.insert("end", f"{f[0]:<4} | {f[1]:<20} | {f[2]:<12} | {f[3]}\n")
+        caja_proyectos.insert("end", f"{'ID':<4} | {'TÍTULO CANCIÓN':<20} | {'GÉNERO':<12} | {'FASE ACTUAL':<18} | {'DUEÑO'}\n" + "-"*85 + "\n")
+        for f in regs: caja_proyectos.insert("end", f"{f[0]:<4} | {f[1]:<20} | {f[2]:<12} | {f[3]:<18} | {f[4]}\n")
         bd.desconectar()
     caja_proyectos.configure(state="disabled")
 
+boton_actualizar_proy = ctk.CTkButton(tab_proyectos, text="🔄 Actualizar Lista", font=("Arial", 12), command=cargar_proyectos_gui)
+boton_actualizar_proy.pack(pady=5)
+
+# --- NUEVA SECCIÓN: ACTUALIZAR FASE (UPDATE) ---
+ctk.CTkLabel(tab_proyectos, text="🎚️ Actualizar Estado / Fase de la Canción", font=("Arial", 14, "bold"), text_color="#FFFFFF").pack(pady=10)
+
+marco_fase = ctk.CTkFrame(tab_proyectos, fg_color="transparent")
+marco_fase.pack(pady=2)
+
+en_id_fase = ctk.CTkEntry(marco_fase, placeholder_text="ID Canción...", width=110)
+en_id_fase.pack(side="left", padx=5)
+
+op_fases_estudio = ctk.CTkOptionMenu(marco_fase, values=["Composición", "Grabación de Voces", "Mezcla", "Masterización", "Terminado"], width=180)
+op_fases_estudio.pack(side="left", padx=5)
+
+def actualizar_fase_gui():
+    id_txt = en_id_fase.get()
+    nueva_fase = op_fases_estudio.get()
+    
+    if not id_txt.strip(): return
+    try:
+        id_p = int(id_txt)
+    except ValueError: return
+
+    bd = ConexionBD(); con = bd.conectar()
+    if con:
+        # Instanciamos un objeto temporal para usar el método UPDATE
+        proy_temp = Proyecto(id_usuario=0, titulo_temp="", genero="")
+        exito = proy_temp.actualizar_fase(con, id_p, nueva_fase)
+        bd.desconectar()
+        
+        if exito:
+            etiqueta_estado_proy.configure(text=f"✨ ¡Canción ID {id_p} movida a '{nueva_fase}'!", text_color="#FFFFFF")
+            en_id_fase.delete(0, 'end')
+            cargar_proyectos_gui() # Recarga la lista para ver el cambio reflejado
+
+boton_fase = ctk.CTkButton(marco_fase, text="Actualizar Estado", font=("Arial", 12, "bold"), text_color="#FFFFFF", command=actualizar_fase_gui)
+boton_fase.pack(side="left", padx=5)
+
+
 # ================================================================
-# PESTAÑA 3: AUDIOS (Registro y Lista Relacional)
+# PESTAÑA 3: AUDIOS (Registro, Lista Relacional y Delete)
 # ================================================================
 sub_aud = ctk.CTkLabel(tab_audios, text="Subir Nuevo Archivo de Audio", font=("Arial", 16, "bold"), text_color="#FFFFFF")
 sub_aud.pack(pady=5)
@@ -143,7 +184,6 @@ boton_aud.pack(pady=10)
 etiqueta_estado_aud = ctk.CTkLabel(tab_audios, text="", font=("Arial", 12))
 etiqueta_estado_aud.pack()
 
-# --- NUEVO VISUALIZADOR DE AUDIOS ---
 ctk.CTkLabel(tab_audios, text="🔊 Archivos de Audio en el Sistema", font=("Arial", 14, "bold"), text_color="#FFFFFF").pack(pady=5)
 caja_audios = ctk.CTkTextbox(tab_audios, width=700, height=130, font=("Courier New", 13), wrap="none")
 caja_audios.pack(pady=5)
@@ -153,7 +193,6 @@ def cargar_audios_gui():
     bd = ConexionBD(); con = bd.conectar()
     if con:
         cursor = con.cursor()
-        # INNER JOIN: Unimos archivos_audio con proyectos para ver el título de la canción
         sql = "SELECT a.id_archivo, p.titulo_temp, a.categoria, a.formato, a.tamano_mb FROM archivos_audio a INNER JOIN proyectos p ON a.id_proyecto = p.id_proyecto"
         cursor.execute(sql)
         regs = cursor.fetchall()
@@ -161,11 +200,10 @@ def cargar_audios_gui():
         for f in regs: caja_audios.insert("end", f"{f[0]:<4} | {f[1]:<20} | {f[2]:<15} | {f[3]:<8} | {f[4]} MB\n")
         bd.desconectar()
     caja_audios.configure(state="disabled")
-    
+
 # --- SECCIÓN DE ELIMINAR AUDIO ---
 ctk.CTkLabel(tab_audios, text="🗑️ Eliminar Archivo de Audio", font=("Arial", 14, "bold"), text_color="#FFFFFF").pack(pady=10)
 
-# Creamos un pequeño marco invisible para poner la caja y el botón en la misma línea
 marco_eliminar = ctk.CTkFrame(tab_audios, fg_color="transparent")
 marco_eliminar.pack(pady=5)
 
@@ -174,42 +212,22 @@ entrada_id_eliminar.pack(side="left", padx=10)
 
 def eliminar_audio_gui():
     id_texto = entrada_id_eliminar.get()
-    if not id_texto.strip():
-        etiqueta_estado_aud.configure(text="❌ Ingresa el ID para eliminar.", text_color="#FF4C4C")
-        return
-        
-    try:
-        id_borrar = int(id_texto)
-    except ValueError:
-        etiqueta_estado_aud.configure(text="❌ El ID debe ser un número entero.", text_color="#FF4C4C")
-        return
+    if not id_texto.strip(): return
+    try: id_borrar = int(id_texto)
+    except ValueError: return
 
-    bd = ConexionBD()
-    con = bd.conectar()
+    bd = ConexionBD(); con = bd.conectar()
     if con:
-        # Instanciamos un objeto temporal vacío solo para usar su función de eliminar
         audio_temp = ArchivoAudio(id_proyecto=0, categoria="", formato="", tamano_mb=0, url_almacen="")
         exito = audio_temp.eliminar_de_bd(con, id_borrar)
         bd.desconectar()
-        
         if exito:
             etiqueta_estado_aud.configure(text=f"✅ Archivo con ID {id_borrar} eliminado.", text_color="#FFFFFF")
-            entrada_id_eliminar.delete(0, 'end')
-            cargar_audios_gui() # Recarga la lista para que veas cómo desaparece
-        else:
-            etiqueta_estado_aud.configure(text="⚠️ Hubo un problema al eliminar.", text_color="#FF4C4C")
+            entrada_id_eliminar.delete(0, 'end'); cargar_audios_gui()
 
-# Botón color rojo para acciones de borrado
-boton_eliminar = ctk.CTkButton(
-    marco_eliminar, 
-    text="Eliminar", 
-    font=("Arial", 12, "bold"), 
-    text_color="#FFFFFF",
-    fg_color="#D9534F", 
-    hover_color="#C9302C", 
-    command=eliminar_audio_gui
-)
+boton_eliminar = ctk.CTkButton(marco_eliminar, text="Eliminar", font=("Arial", 12, "bold"), text_color="#FFFFFF", fg_color="#D9534F", hover_color="#C9302C", command=eliminar_audio_gui)
 boton_eliminar.pack(side="left")
+
 
 # Disparadores iniciales
 ventana.after(100, cargar_usuarios_gui)
