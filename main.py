@@ -10,14 +10,14 @@ ctk.set_default_color_theme("blue")
 
 # 2. Ventana principal
 ventana = ctk.CTk()
-ventana.geometry("950x850") # Aumentamos un poco la altura para el nuevo panel
+ventana.geometry("950x880") 
 ventana.title("TrackManager Pro - Offten Studio")
 
 titulo_principal = ctk.CTkLabel(ventana, text="🎵 Panel Maestro de Proyectos", font=("Arial", 24, "bold"), text_color="#FFFFFF")
 titulo_principal.pack(pady=10) 
 
 # --- PESTAÑAS ---
-panel_pestanas = ctk.CTkTabview(ventana, width=880, height=700)
+panel_pestanas = ctk.CTkTabview(ventana, width=880, height=750)
 panel_pestanas.pack(pady=5, padx=20)
 
 tab_usuarios = panel_pestanas.add("Usuarios")
@@ -25,7 +25,7 @@ tab_proyectos = panel_pestanas.add("Proyectos Musicales")
 tab_audios = panel_pestanas.add("Archivos de Audio")
 
 # ================================================================
-# PESTAÑA 1: USUARIOS (Registro y Lista)
+# PESTAÑA 1: USUARIOS
 # ================================================================
 sub_usu = ctk.CTkLabel(tab_usuarios, text="Registro de Nuevo Usuario", font=("Arial", 16, "bold"), text_color="#FFFFFF")
 sub_usu.pack(pady=5)
@@ -65,9 +65,8 @@ def cargar_usuarios_gui():
         bd.desconectar()
     caja_usuarios.configure(state="disabled")
 
-
 # ================================================================
-# PESTAÑA 2: PROYECTOS (Registro, Lista Relacional y Update)
+# PESTAÑA 2: PROYECTOS (Registro, Update, Lista y Búsqueda)
 # ================================================================
 sub_proy = ctk.CTkLabel(tab_proyectos, text="Crear Nueva Maqueta", font=("Arial", 16, "bold"), text_color="#FFFFFF")
 sub_proy.pack(pady=5)
@@ -96,26 +95,50 @@ boton_proy.pack(pady=10)
 etiqueta_estado_proy = ctk.CTkLabel(tab_proyectos, text="", font=("Arial", 12))
 etiqueta_estado_proy.pack()
 
+# --- NUEVA SECCIÓN: BARRA DE BÚSQUEDA Y FILTROS ---
+marco_filtro = ctk.CTkFrame(tab_proyectos, fg_color="transparent")
+marco_filtro.pack(pady=5)
+
+ctk.CTkLabel(marco_filtro, text="🔍 Filtrar por Género:", font=("Arial", 12, "bold"), text_color="#FFFFFF").pack(side="left", padx=5)
+op_filtro_gen = ctk.CTkOptionMenu(marco_filtro, values=["Todos", "Pop", "Dance-Pop", "Urbano", "Otro"], width=130)
+op_filtro_gen.pack(side="left", padx=5)
+
+def aplicar_filtro_gui():
+    genero_seleccionado = op_filtro_gen.get()
+    cargar_proyectos_gui(filtro_genero=genero_seleccionado)
+
+boton_filtrar = ctk.CTkButton(marco_filtro, text="Filtrar", font=("Arial", 12, "bold"), text_color="#FFFFFF", width=80, command=aplicar_filtro_gui)
+boton_filtrar.pack(side="left", padx=5)
+
 caja_proyectos = ctk.CTkTextbox(tab_proyectos, width=700, height=130, font=("Courier New", 13), wrap="none")
 caja_proyectos.pack(pady=5)
 
-def cargar_proyectos_gui():
+# Modificamos la función para que reciba el filtro (por defecto "Todos")
+def cargar_proyectos_gui(filtro_genero="Todos"):
     caja_proyectos.configure(state="normal"); caja_proyectos.delete("1.0", "end")
     bd = ConexionBD(); con = bd.conectar()
     if con:
         cursor = con.cursor()
-        cursor.execute("SELECT p.id_proyecto, p.titulo_temp, p.genero, p.fase_actual, u.correo FROM proyectos p INNER JOIN usuarios u ON p.id_usuario = u.id_usuario")
+        if filtro_genero == "Todos":
+            sql = "SELECT p.id_proyecto, p.titulo_temp, p.genero, p.fase_actual, u.correo FROM proyectos p INNER JOIN usuarios u ON p.id_usuario = u.id_usuario"
+            cursor.execute(sql)
+        else:
+            # Aquí aplicamos el poder de la cláusula WHERE
+            sql = "SELECT p.id_proyecto, p.titulo_temp, p.genero, p.fase_actual, u.correo FROM proyectos p INNER JOIN usuarios u ON p.id_usuario = u.id_usuario WHERE p.genero = %s"
+            cursor.execute(sql, (filtro_genero,))
+            
         regs = cursor.fetchall()
         caja_proyectos.insert("end", f"{'ID':<4} | {'TÍTULO CANCIÓN':<20} | {'GÉNERO':<12} | {'FASE ACTUAL':<18} | {'DUEÑO'}\n" + "-"*85 + "\n")
-        for f in regs: caja_proyectos.insert("end", f"{f[0]:<4} | {f[1]:<20} | {f[2]:<12} | {f[3]:<18} | {f[4]}\n")
+        
+        if not regs:
+            caja_proyectos.insert("end", f"No hay canciones de género '{filtro_genero}' registradas.\n")
+        else:
+            for f in regs: caja_proyectos.insert("end", f"{f[0]:<4} | {f[1]:<20} | {f[2]:<12} | {f[3]:<18} | {f[4]}\n")
         bd.desconectar()
     caja_proyectos.configure(state="disabled")
 
-boton_actualizar_proy = ctk.CTkButton(tab_proyectos, text="🔄 Actualizar Lista", font=("Arial", 12), command=cargar_proyectos_gui)
-boton_actualizar_proy.pack(pady=5)
-
-# --- NUEVA SECCIÓN: ACTUALIZAR FASE (UPDATE) ---
-ctk.CTkLabel(tab_proyectos, text="🎚️ Actualizar Estado / Fase de la Canción", font=("Arial", 14, "bold"), text_color="#FFFFFF").pack(pady=10)
+# --- ACTUALIZAR FASE (UPDATE) ---
+ctk.CTkLabel(tab_proyectos, text="🎚️ Actualizar Estado / Fase de la Canción", font=("Arial", 14, "bold"), text_color="#FFFFFF").pack(pady=5)
 
 marco_fase = ctk.CTkFrame(tab_proyectos, fg_color="transparent")
 marco_fase.pack(pady=2)
@@ -129,30 +152,24 @@ op_fases_estudio.pack(side="left", padx=5)
 def actualizar_fase_gui():
     id_txt = en_id_fase.get()
     nueva_fase = op_fases_estudio.get()
-    
     if not id_txt.strip(): return
-    try:
-        id_p = int(id_txt)
+    try: id_p = int(id_txt)
     except ValueError: return
 
     bd = ConexionBD(); con = bd.conectar()
     if con:
-        # Instanciamos un objeto temporal para usar el método UPDATE
         proy_temp = Proyecto(id_usuario=0, titulo_temp="", genero="")
         exito = proy_temp.actualizar_fase(con, id_p, nueva_fase)
         bd.desconectar()
-        
         if exito:
             etiqueta_estado_proy.configure(text=f"✨ ¡Canción ID {id_p} movida a '{nueva_fase}'!", text_color="#FFFFFF")
-            en_id_fase.delete(0, 'end')
-            cargar_proyectos_gui() # Recarga la lista para ver el cambio reflejado
+            en_id_fase.delete(0, 'end'); cargar_proyectos_gui(op_filtro_gen.get())
 
 boton_fase = ctk.CTkButton(marco_fase, text="Actualizar Estado", font=("Arial", 12, "bold"), text_color="#FFFFFF", command=actualizar_fase_gui)
 boton_fase.pack(side="left", padx=5)
 
-
 # ================================================================
-# PESTAÑA 3: AUDIOS (Registro, Lista Relacional y Delete)
+# PESTAÑA 3: AUDIOS 
 # ================================================================
 sub_aud = ctk.CTkLabel(tab_audios, text="Subir Nuevo Archivo de Audio", font=("Arial", 16, "bold"), text_color="#FFFFFF")
 sub_aud.pack(pady=5)
@@ -228,10 +245,9 @@ def eliminar_audio_gui():
 boton_eliminar = ctk.CTkButton(marco_eliminar, text="Eliminar", font=("Arial", 12, "bold"), text_color="#FFFFFF", fg_color="#D9534F", hover_color="#C9302C", command=eliminar_audio_gui)
 boton_eliminar.pack(side="left")
 
-
 # Disparadores iniciales
 ventana.after(100, cargar_usuarios_gui)
-ventana.after(150, cargar_proyectos_gui)
+ventana.after(150, cargar_proyectos_gui) # Por defecto arranca en "Todos"
 ventana.after(200, cargar_audios_gui)
 
 if __name__ == "__main__":
