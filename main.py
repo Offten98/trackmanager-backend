@@ -161,6 +161,55 @@ def cargar_audios_gui():
         for f in regs: caja_audios.insert("end", f"{f[0]:<4} | {f[1]:<20} | {f[2]:<15} | {f[3]:<8} | {f[4]} MB\n")
         bd.desconectar()
     caja_audios.configure(state="disabled")
+    
+# --- SECCIÓN DE ELIMINAR AUDIO ---
+ctk.CTkLabel(tab_audios, text="🗑️ Eliminar Archivo de Audio", font=("Arial", 14, "bold"), text_color="#FFFFFF").pack(pady=10)
+
+# Creamos un pequeño marco invisible para poner la caja y el botón en la misma línea
+marco_eliminar = ctk.CTkFrame(tab_audios, fg_color="transparent")
+marco_eliminar.pack(pady=5)
+
+entrada_id_eliminar = ctk.CTkEntry(marco_eliminar, placeholder_text="ID a borrar...", width=150)
+entrada_id_eliminar.pack(side="left", padx=10)
+
+def eliminar_audio_gui():
+    id_texto = entrada_id_eliminar.get()
+    if not id_texto.strip():
+        etiqueta_estado_aud.configure(text="❌ Ingresa el ID para eliminar.", text_color="#FF4C4C")
+        return
+        
+    try:
+        id_borrar = int(id_texto)
+    except ValueError:
+        etiqueta_estado_aud.configure(text="❌ El ID debe ser un número entero.", text_color="#FF4C4C")
+        return
+
+    bd = ConexionBD()
+    con = bd.conectar()
+    if con:
+        # Instanciamos un objeto temporal vacío solo para usar su función de eliminar
+        audio_temp = ArchivoAudio(id_proyecto=0, categoria="", formato="", tamano_mb=0, url_almacen="")
+        exito = audio_temp.eliminar_de_bd(con, id_borrar)
+        bd.desconectar()
+        
+        if exito:
+            etiqueta_estado_aud.configure(text=f"✅ Archivo con ID {id_borrar} eliminado.", text_color="#FFFFFF")
+            entrada_id_eliminar.delete(0, 'end')
+            cargar_audios_gui() # Recarga la lista para que veas cómo desaparece
+        else:
+            etiqueta_estado_aud.configure(text="⚠️ Hubo un problema al eliminar.", text_color="#FF4C4C")
+
+# Botón color rojo para acciones de borrado
+boton_eliminar = ctk.CTkButton(
+    marco_eliminar, 
+    text="Eliminar", 
+    font=("Arial", 12, "bold"), 
+    text_color="#FFFFFF",
+    fg_color="#D9534F", 
+    hover_color="#C9302C", 
+    command=eliminar_audio_gui
+)
+boton_eliminar.pack(side="left")
 
 # Disparadores iniciales
 ventana.after(100, cargar_usuarios_gui)
