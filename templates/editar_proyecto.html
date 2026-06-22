@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Proyecto - TrackManager Pro</title>
+    <style>
+        body { background-color: #060608; background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, transparent 50%); color: white; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px; width: 450px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        h1 { font-family: 'Impact', sans-serif; letter-spacing: 3px; margin-bottom: 5px; color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+        
+        .seccion-titulo { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-weight: 600; font-size: 12px; color: #ffffff; letter-spacing: 4px; margin-bottom: 30px; margin-top: 10px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .seccion-titulo::before, .seccion-titulo::after { content: ""; height: 1px; width: 40px; background: rgba(255, 255, 255, 0.2); }
+        
+        .formulario-vertical { display: flex; flex-direction: column; gap: 15px; text-align: left; }
+        label { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-size: 12px; font-weight: 600; color: #aaaabb; margin-left: 5px; letter-spacing: 1px; text-transform: uppercase; }
+        input, select { background: rgba(10, 10, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 14px; border-radius: 12px; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-size: 14px; outline: none; transition: border 0.3s; }
+        input:focus, select:focus { border-color: rgba(255, 255, 255, 0.3); }
+        option { background: #0A0A0F; color: white; }
+        
+        .btn-guardar { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; padding: 14px; border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 10px; transition: all 0.4s ease; letter-spacing: 1px; }
+        .btn-guardar:hover { background: rgba(255, 255, 255, 0.15); box-shadow: 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 10px rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.5); }
+        
+        .btn-cancelar { text-align: center; color: #666677; text-decoration: none; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-weight: 600; font-size: 12px; margin-top: 15px; transition: color 0.3s; letter-spacing: 1px; }
+        .btn-cancelar:hover { color: #ffffff; }
+    </style>
+</head>
+<body>
+    <div class="glass-panel">
+        <h1>MODIFICAR PROYECTO</h1>
+        <div class="seccion-titulo">ID Proyecto: {{ p[0] }}</div>
+        
+        <form method="POST" class="formulario-vertical">
+            <label>Título de la Canción:</label>
+            <input type="text" name="titulo" value="{{ p[1] }}" required>
+            
+            <label>Género Musical:</label>
+            <select name="genero">
+                <option value="Pop" {% if p[2] == 'Pop' %}selected{% endif %}>Pop</option>
+                <option value="Dance-Pop" {% if p[2] == 'Dance-Pop' %}selected{% endif %}>Dance-Pop</option>
+                <option value="Urbano" {% if p[2] == 'Urbano' %}selected{% endif %}>Urbano</option>
+                <option value="Otro" {% if p[2] == 'Otro' %}selected{% endif %}>Otro</option>
+            </select>
+            
+            <label>Fase de Producción:</label>
+            <select name="fase">
+                <option value="Composición" {% if p[3] == 'Composición' %}selected{% endif %}>Composición</option>
+                <option value="Grabación" {% if p[3] == 'Grabación' %}selected{% endif %}>Grabación</option>
+                <option value="Mezcla" {% if p[3] == 'Mezcla' %}selected{% endif %}>Mezcla</option>
+                <option value="Masterización" {% if p[3] == 'Masterización' %}selected{% endif %}>Masterización</option>
+            </select>
+            
+            <button type="submit" class="btn-guardar">APLICAR CAMBIOS</button>
+            <a href="/proyectos" class="btn-cancelar">CANCELAR OPERACIÓN</a>
+        </form>
+    </div>
+</body>
+</html>

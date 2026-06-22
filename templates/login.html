@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Acceso - TrackManager Pro</title>
+    <style>
+        body { background-color: #060608; background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, transparent 50%); color: white; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 50px 40px; width: 380px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        h1 { font-family: 'Impact', sans-serif; letter-spacing: 3px; margin-bottom: 5px; color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.1); font-size: 28px; }
+        .seccion-titulo { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-weight: 600; font-size: 11px; color: #aaaabb; letter-spacing: 4px; margin-bottom: 35px; margin-top: 10px; text-transform: uppercase; }
+        
+        .formulario-vertical { display: flex; flex-direction: column; gap: 20px; }
+        input { background: rgba(10, 10, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 14px 18px; border-radius: 12px; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-size: 13px; outline: none; transition: border 0.3s; text-align: center; }
+        input:focus { border-color: rgba(255, 255, 255, 0.4); box-shadow: 0 0 15px rgba(255, 255, 255, 0.05); }
+        input::placeholder { color: #555566; letter-spacing: 1px; }
+        
+        button { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); color: #ffffff; padding: 14px; border-radius: 12px; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; transition: all 0.4s ease; letter-spacing: 2px; margin-top: 10px; }
+        button:hover { background: rgba(255, 255, 255, 0.15); box-shadow: 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 10px rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.5); }
+
+        .btn-enlace { margin-top: 25px; display: inline-block; color: #666677; text-decoration: none; font-size: 12px; font-weight: 600; transition: color 0.3s; }
+        .btn-enlace:hover { color: white; }
+
+        .alerta-error { background: rgba(255, 85, 85, 0.1); border: 1px solid rgba(255, 85, 85, 0.3); color: #ff8888; padding: 12px; border-radius: 12px; font-size: 11px; margin-bottom: 20px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+        .alerta-exito { background: rgba(85, 255, 170, 0.1); border: 1px solid rgba(85, 255, 170, 0.3); color: #88ffbb; padding: 12px; border-radius: 12px; font-size: 11px; margin-bottom: 20px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+    <div class="glass-panel">
+        <h1>OFFTEN STUDIO</h1>
+        <div class="seccion-titulo">ACCESO AL SISTEMA</div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for categoria, msg in messages %}
+                    <div class="alerta-{{ 'error' if categoria == 'error' else 'exito' }}">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="/login" class="formulario-vertical">
+            <input type="email" name="correo" placeholder="CORREO ELECTRÓNICO" required autocomplete="off" autofocus>
+            <input type="password" name="password" placeholder="CONTRASEÑA" required>
+            <button type="submit">INICIAR SESIÓN</button>
+        </form>
+
+        <a href="/registro" class="btn-enlace">¿No tienes cuenta? Regístrate aquí</a>
+    </div>
+</body>
+</html>

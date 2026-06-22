@@ -4,82 +4,62 @@
     <meta charset="UTF-8">
     <title>TrackManager Pro - Usuarios</title>
     <style>
-        body {
-            background-color: #060608;
-            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, transparent 50%);
-            color: white;
-            font-family: 'Verdana', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 40px;
-            width: 85%;
-            max-width: 900px;
-            text-align: center;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
-        }
-
-        h1 { font-family: 'Impact', sans-serif; letter-spacing: 3px; margin-bottom: 5px; }
-        .subtitulo { font-family: 'Lucida Console', monospace; color: #888899; margin-bottom: 25px; }
+        body { background-color: #060608; background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, transparent 50%); color: white; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px; width: 85%; max-width: 900px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); position: relative; }
+        h1 { font-family: 'Impact', sans-serif; letter-spacing: 3px; margin-bottom: 5px; color: #ffffff; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
         
-        .nav-bar { margin-bottom: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; }
-        .nav-bar a { color: #888899; text-decoration: none; font-family: 'Lucida Console', monospace; font-size: 14px; margin: 0 15px; padding: 8px 15px; border-radius: 8px; transition: all 0.3s; }
-        .nav-bar a:hover { background: rgba(255, 255, 255, 0.1); color: white; }
-        .nav-bar a.activo { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+        .seccion-titulo { font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-weight: 600; font-size: 12px; color: #ffffff; letter-spacing: 4px; margin-bottom: 30px; margin-top: 10px; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 15px; }
+        .seccion-titulo::before, .seccion-titulo::after { content: ""; height: 1px; width: 60px; background: rgba(255, 255, 255, 0.2); }
+        
+        .nav-container { display: flex; justify-content: center; align-items: center; position: relative; margin-bottom: 25px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 15px; }
+        .nav-bar { display: flex; gap: 10px; }
+        .nav-bar a { color: #666677; text-decoration: none; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-weight: 600; font-size: 12px; padding: 8px 15px; border-radius: 8px; transition: all 0.4s ease; border: 1px solid transparent; letter-spacing: 1px; }
+        .nav-bar a:hover { color: #ffffff; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); }
+        .nav-bar a.activo { color: #ffffff; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05); }
 
-        .formulario-glass { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
-        input, select, button { background: rgba(10, 10, 15, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); color: white; padding: 12px 18px; border-radius: 14px; font-family: 'Verdana', sans-serif; font-size: 13px; outline: none; }
-        input::placeholder { color: #555566; }
+        .btn-logout { position: absolute; right: 0; color: #666677; text-decoration: none; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-weight: 600; font-size: 12px; padding: 8px 15px; border-radius: 8px; transition: all 0.4s ease; border: 1px solid transparent; letter-spacing: 1px; }
+        .btn-logout:hover { color: #ff8888; background: rgba(255, 85, 85, 0.05); border: 1px solid rgba(255, 85, 85, 0.3); box-shadow: 0 0 15px rgba(255, 85, 85, 0.15), inset 0 0 8px rgba(255, 85, 85, 0.05); }
+
+        .formulario-glass { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+        input, select { background: rgba(10, 10, 15, 0.4); border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 12px 18px; border-radius: 12px; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-size: 13px; outline: none; transition: border 0.3s; }
+        input:focus, select:focus { border-color: rgba(255, 255, 255, 0.3); }
+        input::placeholder { color: #444455; }
         option { background: #0A0A0F; color: white; }
-        button { background: rgba(255, 255, 255, 0.08); cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
-        button:hover { background: rgba(255, 255, 255, 0.15); border-color: white; }
+        
+        button { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); color: #888899; padding: 12px 18px; border-radius: 12px; font-family: 'Segoe UI', Tahoma, Geneva, sans-serif; font-size: 13px; cursor: pointer; font-weight: 600; transition: all 0.4s ease; }
+        button:hover { color: #ffffff; background: rgba(255, 255, 255, 0.1); border-color: rgba(255, 255, 255, 0.4); box-shadow: 0 0 20px rgba(255, 255, 255, 0.2), inset 0 0 10px rgba(255, 255, 255, 0.1); }
 
-        table { width: 100%; border-collapse: collapse; font-family: 'Lucida Console', monospace; font-size: 14px; }
-        th, td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
-        th { background: rgba(255, 255, 255, 0.05); color: #aaaabb; }
-        tr:hover { background: rgba(255, 255, 255, 0.08); }
+        .alerta-error { background: rgba(255, 85, 85, 0.1); border: 1px solid rgba(255, 85, 85, 0.3); color: #ff8888; padding: 12px; border-radius: 12px; font-size: 12px; margin-bottom: 20px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
 
-        /* BOTÓN DE ELIMINAR ESTILIZADO */
-        .btn-eliminar {
-            color: #ff5555;
-            text-decoration: none;
-            font-weight: bold;
-            padding: 5px 12px;
-            border: 1px solid rgba(255, 85, 85, 0.2);
-            border-radius: 8px;
-            background: rgba(255, 85, 85, 0.05);
-            transition: all 0.3s ease;
-        }
+        .zona-superior-tabla { display: flex; justify-content: flex-end; margin-bottom: 15px; padding: 0 5px; }
+        .form-buscar { display: flex; gap: 8px; }
+        .input-buscar { padding: 8px 14px; font-size: 12px; border-radius: 10px; width: 220px; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .input-buscar:focus { border-color: rgba(255, 255, 255, 0.2); }
+        .btn-buscar { padding: 8px 14px; font-size: 11px; border-radius: 10px; background: rgba(255, 255, 255, 0.02); color: #777788; border: 1px solid rgba(255, 255, 255, 0.05); }
 
-        .btn-eliminar:hover {
-            background: #ff5555;
-            color: white;
-            box-shadow: 0 0 10px rgba(255, 85, 85, 0.4);
-        }
+        table { width: 100%; border-collapse: collapse; font-family: 'Lucida Console', monospace; font-size: 13px; color: #aaaabb; }
+        th, td { padding: 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        th { color: #555566; font-weight: normal; letter-spacing: 1px; }
+        tr:hover { background: rgba(255, 255, 255, 0.02); color: #ffffff; }
+
+        .btn-accion { text-decoration: none; font-family: 'Lucida Console', monospace; padding: 6px 14px; border-radius: 8px; font-size: 11px; transition: all 0.4s ease; margin: 0 4px; color: #666677; background: rgba(255, 255, 255, 0.01); border: 1px solid rgba(255, 255, 255, 0.03); }
+        .btn-accion:hover { color: #ffffff; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.4); box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), inset 0 0 8px rgba(255, 255, 255, 0.1); }
     </style>
 </head>
 <body>
-
     <div class="glass-panel">
         <h1>TRACKMANAGER PRO</h1>
         
-        <div class="nav-bar">
-            <a href="/" class="activo">[ USUARIOS ]</a>
-            <a href="/proyectos">[ PROYECTOS MUSICALES ]</a>
-            <a href="/audios">[ ARCHIVOS DE AUDIO ]</a>
+        <div class="nav-container">
+            <div class="nav-bar">
+                <a href="/" class="activo">USUARIOS</a>
+                <a href="/proyectos">PROYECTOS MUSICALES</a>
+                <a href="/audios">ARCHIVOS DE AUDIO</a>
+            </div>
+            <a href="/logout" class="btn-logout">SALIR</a>
         </div>
-
-        <div class="subtitulo">> REGISTRO DE NUEVO USUARIO_</div>
+        
+        <div class="seccion-titulo">Registro de Nuevo Usuario</div>
         
         <form method="POST" action="/" class="formulario-glass">
             <input type="email" name="correo" placeholder="Correo electrónico..." required autocomplete="off">
@@ -87,8 +67,27 @@
                 <option value="Artista Independiente">Artista Independiente</option>
                 <option value="Mánager Premium">Mánager Premium</option>
             </select>
+            <input type="password" name="password" placeholder="Contraseña..." required style="width: 150px;">
             <button type="submit">GUARDAR USUARIO</button>
         </form>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                {% for msg in messages %}
+                    <div class="alerta-error">{{ msg }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <div class="zona-superior-tabla">
+            <form method="GET" action="/" class="form-buscar">
+                <input type="text" name="q" placeholder="Filtrar correo..." class="input-buscar" autocomplete="off" value="{{ request.args.get('q', '') }}">
+                <button type="submit" class="btn-buscar">BUSCAR</button>
+                {% if request.args.get('q') %}
+                    <a href="/" class="btn-buscar" style="text-decoration:none; display:flex; align-items:center;">LIMPIAR</a>
+                {% endif %}
+            </form>
+        </div>
 
         <table>
             <thead>
@@ -96,7 +95,8 @@
                     <th>ID</th>
                     <th>Correo Electrónico</th>
                     <th>Tipo de Cuenta</th>
-                    <th>Acciones</th> </tr>
+                    <th>Acciones</th>
+                </tr>
             </thead>
             <tbody>
                 {% for usuario in usuarios %}
@@ -105,19 +105,15 @@
                     <td>{{ usuario[1] }}</td>
                     <td>{{ usuario[2] }}</td>
                     <td>
-                        <a href="/eliminar_usuario/{{ usuario[0] }}" class="btn-eliminar">ELIMINAR</a>
+                        <a href="/editar_usuario/{{ usuario[0] }}" class="btn-accion">EDITAR</a>
+                        <a href="/eliminar_usuario/{{ usuario[0] }}" class="btn-accion">ELIMINAR</a>
                     </td>
                 </tr>
                 {% else %}
-                <tr>
-                    <td colspan="4">No hay usuarios registrados en la base de datos.</td>
-                </tr>
+                <tr><td colspan="4">No hay registros que coincidan con la búsqueda.</td></tr>
                 {% endfor %}
             </tbody>
         </table>
-
-        <p style="font-size: 11px; margin-top: 30px; color: #555566;">Offten Studio - Entorno Web Activo</p>
     </div>
-
 </body>
 </html>
