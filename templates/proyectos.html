@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Proyectos - TrackManager Pro</title>
+    <style>
+        body { background-color: #060608; background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, transparent 50%); color: white; font-family: 'Verdana', sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .glass-panel { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 40px; width: 85%; max-width: 900px; text-align: center; box-shadow: 0 15px 35px rgba(0,0,0,0.5); }
+        h1 { font-family: 'Impact', sans-serif; letter-spacing: 3px; margin-bottom: 5px; }
+        .subtitulo { font-family: 'Lucida Console', monospace; color: #888899; margin-bottom: 25px; }
+        
+        /* MENU DE NAVEGACIÓN Y2K */
+        .nav-bar { margin-bottom: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; }
+        .nav-bar a { color: #888899; text-decoration: none; font-family: 'Lucida Console', monospace; font-size: 14px; margin: 0 15px; padding: 8px 15px; border-radius: 8px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+        .nav-bar a.activo { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+
+        .formulario-glass { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
+        input, select, button { background: rgba(10, 10, 15, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); color: white; padding: 12px 18px; border-radius: 14px; font-family: 'Verdana', sans-serif; font-size: 13px; outline: none; }
+        input::placeholder { color: #555566; }
+        option { background: #0A0A0F; color: white; }
+        button { background: rgba(255, 255, 255, 0.08); cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
+        button:hover { background: rgba(255, 255, 255, 0.15); border-color: white; }
+        table { width: 100%; border-collapse: collapse; font-family: 'Lucida Console', monospace; font-size: 14px; }
+        th, td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        th { background: rgba(255, 255, 255, 0.05); color: #aaaabb; }
+        tr:hover { background: rgba(255, 255, 255, 0.08); }
+    </style>
+</head>
+<body>
+
+    <div class="glass-panel">
+        <h1>TRACKMANAGER PRO</h1>
+        
+        <div class="nav-bar">
+            <a href="/">[ USUARIOS ]</a>
+            <a href="/proyectos" class="activo">[ PROYECTOS MUSICALES ]</a>
+            <a href="/audios">[ ARCHIVOS DE AUDIO ]</a>
+        </div>
+
+        <div class="subtitulo">> CREAR NUEVA MAQUETA MUSICAL_</div>
+        
+        <form method="POST" action="/proyectos" class="formulario-glass">
+            <input type="number" name="id_usuario" placeholder="ID Dueño..." required style="width: 100px;">
+            <input type="text" name="titulo" placeholder="Título de la canción..." required>
+            <select name="genero">
+                <option value="Pop">Pop</option>
+                <option value="Dance-Pop">Dance-Pop</option>
+                <option value="Urbano">Urbano</option>
+                <option value="Otro">Otro</option>
+            </select>
+            <button type="submit">CREAR PROYECTO</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Título Canción</th>
+                    <th>Género</th>
+                    <th>Fase Actual</th>
+                    <th>Dueño (Correo)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in proyectos %}
+                <tr>
+                    <td>{{ p[0] }}</td>
+                    <td>{{ p[1] }}</td>
+                    <td>{{ p[2] }}</td>
+                    <td>{{ p[3] }}</td>
+                    <td>{{ p[4] }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="5">No hay proyectos musicales registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</body>
+</html>

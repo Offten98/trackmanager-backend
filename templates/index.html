@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>TrackManager Pro - Usuarios</title>
+    <style>
+        body {
+            background-color: #060608;
+            background-image: radial-gradient(circle at 50% 0%, #1a1a2e 0%, transparent 50%);
+            color: white;
+            font-family: 'Verdana', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 40px;
+            width: 85%;
+            max-width: 900px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+
+        h1 { font-family: 'Impact', sans-serif; letter-spacing: 3px; margin-bottom: 5px; }
+        .subtitulo { font-family: 'Lucida Console', monospace; color: #888899; margin-bottom: 25px; }
+        
+        .nav-bar { margin-bottom: 30px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; }
+        .nav-bar a { color: #888899; text-decoration: none; font-family: 'Lucida Console', monospace; font-size: 14px; margin: 0 15px; padding: 8px 15px; border-radius: 8px; transition: all 0.3s; }
+        .nav-bar a:hover { background: rgba(255, 255, 255, 0.1); color: white; }
+        .nav-bar a.activo { background: rgba(255, 255, 255, 0.15); color: white; border: 1px solid rgba(255, 255, 255, 0.3); }
+
+        .formulario-glass { display: flex; justify-content: center; gap: 10px; margin-bottom: 25px; }
+        input, select, button { background: rgba(10, 10, 15, 0.6); border: 1px solid rgba(255, 255, 255, 0.2); color: white; padding: 12px 18px; border-radius: 14px; font-family: 'Verdana', sans-serif; font-size: 13px; outline: none; }
+        input::placeholder { color: #555566; }
+        option { background: #0A0A0F; color: white; }
+        button { background: rgba(255, 255, 255, 0.08); cursor: pointer; font-weight: bold; transition: all 0.3s ease; }
+        button:hover { background: rgba(255, 255, 255, 0.15); border-color: white; }
+
+        table { width: 100%; border-collapse: collapse; font-family: 'Lucida Console', monospace; font-size: 14px; }
+        th, td { padding: 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        th { background: rgba(255, 255, 255, 0.05); color: #aaaabb; }
+        tr:hover { background: rgba(255, 255, 255, 0.08); }
+
+        /* BOTÓN DE ELIMINAR ESTILIZADO */
+        .btn-eliminar {
+            color: #ff5555;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 12px;
+            border: 1px solid rgba(255, 85, 85, 0.2);
+            border-radius: 8px;
+            background: rgba(255, 85, 85, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .btn-eliminar:hover {
+            background: #ff5555;
+            color: white;
+            box-shadow: 0 0 10px rgba(255, 85, 85, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="glass-panel">
+        <h1>TRACKMANAGER PRO</h1>
+        
+        <div class="nav-bar">
+            <a href="/" class="activo">[ USUARIOS ]</a>
+            <a href="/proyectos">[ PROYECTOS MUSICALES ]</a>
+            <a href="/audios">[ ARCHIVOS DE AUDIO ]</a>
+        </div>
+
+        <div class="subtitulo">> REGISTRO DE NUEVO USUARIO_</div>
+        
+        <form method="POST" action="/" class="formulario-glass">
+            <input type="email" name="correo" placeholder="Correo electrónico..." required autocomplete="off">
+            <select name="tipo_cuenta">
+                <option value="Artista Independiente">Artista Independiente</option>
+                <option value="Mánager Premium">Mánager Premium</option>
+            </select>
+            <button type="submit">GUARDAR USUARIO</button>
+        </form>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Correo Electrónico</th>
+                    <th>Tipo de Cuenta</th>
+                    <th>Acciones</th> </tr>
+            </thead>
+            <tbody>
+                {% for usuario in usuarios %}
+                <tr>
+                    <td>{{ usuario[0] }}</td>
+                    <td>{{ usuario[1] }}</td>
+                    <td>{{ usuario[2] }}</td>
+                    <td>
+                        <a href="/eliminar_usuario/{{ usuario[0] }}" class="btn-eliminar">ELIMINAR</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="4">No hay usuarios registrados en la base de datos.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <p style="font-size: 11px; margin-top: 30px; color: #555566;">Offten Studio - Entorno Web Activo</p>
+    </div>
+
+</body>
+</html>
