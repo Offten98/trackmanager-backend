@@ -1,31 +1,27 @@
-# TrackManager Pro - Offten Studio 🎵
+# 🎛️ TrackManager Pro - SaaS Music Studio
 
-TrackManager Pro es una aplicación de escritorio desarrollada en Python orientada a la gestión y control de flujos de producción musical, maquetas y almacenamiento de archivos de audio (*stems*, pistas vocales, instrumentales y másters). El sistema integra una interfaz gráfica de usuario moderna con una arquitectura de base de datos relacional robusta.
+TrackManager Pro es una plataforma integral en la nube diseñada para resolver la desorganización en el flujo de trabajo de productores musicales y artistas independientes. Desarrollada con un enfoque especial en la gestión de stems para producciones de géneros contemporáneos (Pop, Urbano, Dance-Pop), permite centralizar maquetas, controlar el almacenamiento de archivos de audio y gestionar el progreso de las composiciones en un entorno completamente privado.
 
 ## 🚀 Características Principales
 
-- **Gestión de Usuarios:** Registro estructurado de cuentas de artistas y mánagers con almacenamiento seguro en base de datos.
-- **Control de Proyectos Musicales:** Creación y seguimiento de maquetas musicales enfocadas en géneros como Pop, Dance-Pop y Urbano, vinculadas directamente a su respectivo dueño mediante llaves foráneas.
-- **Administración de Archivos de Audio:** Registro técnico de pistas de audio asociadas a cada proyecto, detallando formato (WAV, MP3), tamaño en megabytes y rutas lógicas de almacenamiento.
-- **Consultas Relacionales Integradas:** Renderizado de datos cruzados en tiempo real mediante operaciones `INNER JOIN` ejecutadas directamente hacia componentes visuales independientes.
+* **Arquitectura Multi-tenancy (Aislamiento de Datos):** Sistema multiusuario donde cada cuenta opera en un entorno privado. Los proyectos y audios están estrictamente vinculados al ID de sesión del usuario logeado mediante consultas SQL seguras.
+* **Procesamiento de Archivos Binarios:** Motor de subida de archivos `.wav` y `.mp3` con validación backend, renombramiento seguro (`secure_filename`) y cálculo automático de peso (MB) y formato.
+* **Gestión Eficiente de Recursos:** Sistema de borrado físico optimizado. Al eliminar un registro de la base de datos, el servidor ejecuta una limpieza automática en el disco duro para evitar archivos huérfanos.
+* **Seguridad y Validación Estricta:** 
+  * Encriptación de contraseñas (*Hashing*) mediante `werkzeug.security`.
+  * Validación de dominios de correo electrónico en tiempo real mediante resolución DNS (`email-validator`) para evitar cuentas falsas.
+  * Prevención de errores de claves foráneas con *rollbacks* de archivos en caso de excepciones.
+* **Interfaz "Liquid Glass":** Diseño frontend limpio, inmersivo y responsivo, con un panel de métricas dinámico calculado en tiempo real desde el backend.
 
-## 🛠️ Tecnologías Utilizadas
+## 🛠️ Stack Tecnológico
 
-- **Lenguaje de Programación:** Python 3
-- **Interfaz Gráfica (Front-End):** CustomTkinter (Modo oscuro de alta fidelidad)
-- **Base de Datos (Back-End):** MySQL (Gestionado mediante XAMPP y phpMyAdmin)
-- **Control de Versiones:** Git y GitHub
+* **Backend:** Python 3, Flask.
+* **Base de Datos:** MySQL (Relacional).
+* **Frontend:** HTML5, CSS3 puro (Liquid Glass UI).
+* **Entorno:** Entorno virtual aislado (`.venv`).
 
-## 📊 Arquitectura del Sistema (Modelo Relacional)
+## ⚙️ Instalación y Ejecución Local
 
-El backend se rige bajo las reglas de integridad referencial de una base de datos MySQL, compuesta por tres entidades principales:
-1. **usuarios:** Entidad primaria que identifica a los miembros del sistema.
-2. **proyectos:** Almacena los títulos provisionales de las canciones, géneros y fases del proceso, conectada a la tabla de usuarios mediante la llave foránea `id_usuario`.
-3. **archivos_audio:** Registra las pistas específicas de audio, vinculada de forma estricta a la tabla de proyectos mediante la llave foránea `id_proyecto`.
-
-## 📦 Instalación y Despliegue Local
-
-1. **Clonar el repositorio:**
-   ```bash
-   git clone [https://github.com/TuUsuario/trackmanager-backend.git](https://github.com/TuUsuario/trackmanager-backend.git)
-   cd trackmanager-backend
+1. Clona este repositorio:
+```bash
+   git clone [https://github.com/tu-usuario/trackmanager-pro.git](https://github.com/tu-usuario/trackmanager-pro.git)
